@@ -1,0 +1,23 @@
+from django.db import models
+from category.models import Category
+from django.urls import reverse
+# Create your models here.
+
+class Product(models.Model):
+    product_name = models.CharField(max_length = 200, unique = True)
+    slug = models.CharField(max_length = 200, unique = True)
+    description = models.CharField(max_length = 200, blank = True)
+    price = models.IntegerField()
+    images = models.ImageField(upload_to = 'photos/products')
+    stock = models.IntegerField()
+    is_available = models.BooleanField(default = True)
+    # ESTE ES LA LLAVE FORANEA A CATEGORIAS, SI SE BORRA LA CATEGORIA, SE BOORA AQUI
+    category = models.ForeignKey(Category, on_delete = models.CASCADE)
+    create_date = models.DateTimeField(auto_now_add = True)
+    modife_date = models.DateTimeField(auto_now_add = True)
+
+    def get_url(self):
+        return reverse('product_detail', args=[self.category.slug, self.slug])
+
+    def __str__(self):
+        return self.product_name
